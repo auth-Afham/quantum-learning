@@ -1,21 +1,19 @@
+// 3DCanvas.tsx
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { Canvas, useThree } from "@react-three/fiber";
+import { Canvas, useThree, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
-import Home from "./pages/Home";
 
 // Box component using THREE
-const Box: React.FC = () => {
+export const Box: React.FC = () => {
   const { scene } = useThree();
+  const meshRef = React.useRef<THREE.Mesh>(null);
 
   React.useEffect(() => {
     // Create a mesh
     const geometry = new THREE.BoxGeometry(1, 1, 1);
     const material = new THREE.MeshStandardMaterial({ color: "hotpink" });
     const mesh = new THREE.Mesh(geometry, material);
-
-    // Set rotation
-    mesh.rotation.set(0.4, 0.2, 0.1);
+    meshRef.current = mesh;
 
     // Add to the scene
     scene.add(mesh);
@@ -28,11 +26,18 @@ const Box: React.FC = () => {
     };
   }, [scene]);
 
+  useFrame(() => {
+    if (meshRef.current) {
+      meshRef.current.rotation.x += 0.01;
+      meshRef.current.rotation.y += 0.01;
+    }
+  });
+
   return null; // No JSX to render
 };
 
 // Lights component using THREE
-const Lights: React.FC = () => {
+export const Lights: React.FC = () => {
   const { scene } = useThree();
 
   React.useEffect(() => {
@@ -55,31 +60,15 @@ const Lights: React.FC = () => {
   return null; // No JSX to render
 };
 
-const App: React.FC = () => {
+const ThreeDCanvas: React.FC = () => {
   return (
-    <Router>
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <>
-              <Home />
-              <div style={{ width: "100%", height: "500px" }}>
-                <Canvas>
-                  {/* Add lights */}
-                  <Lights />
-
-                  {/* Add spinning box */}
-                  <Box />
-                </Canvas>
-              </div>
-            </>
-          }
-        />
-        {/* Add more routes as needed */}
-      </Routes>
-    </Router>
+    <div style={{ width: "100%", height: "500px" }}>
+      <Canvas>
+        <Lights />
+        <Box />
+      </Canvas>
+    </div>
   );
 };
 
-export default App;
+export default ThreeDCanvas;
