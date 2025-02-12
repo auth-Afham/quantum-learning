@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { Canvas, useThree, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
-import { FaBell, FaCog, FaUser } from "react-icons/fa"; // Import icons
+import { FaBell, FaCog, FaUser, FaFileAlt } from "react-icons/fa";
+import { faker } from "@faker-js/faker"; // Import faker
 
 // Box component using THREE
 export const Box: React.FC = () => {
@@ -55,9 +56,11 @@ export const Lights: React.FC = () => {
 };
 
 // Carousel Component
+// Carousel Component
 const Carousel: React.FC<{
   items: { id: number; image: string; title: string }[];
-}> = ({ items }) => {
+  onSelectLevel: (levelId: number) => void; // New prop to handle level selection
+}> = ({ items, onSelectLevel }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const handleNext = () => {
@@ -73,39 +76,117 @@ const Carousel: React.FC<{
   };
 
   return (
-    <div className="dark relative flex flex-col items-center justify-between h-[90vh] border-8 w-full">
-      {/* Carousel Item */}
-      <div className="w-full flex items-center justify-center h-[50%]">
-        <div className="relative w-48 h-48">
-          <img
-            src={items[currentIndex].image}
-            alt={`Item ${currentIndex + 1}`}
-            className="w-full h-full object-contain"
-          />
-          <div className="absolute bottom-0 w-full bg-black bg-opacity-50 text-white text-center py-2">
-            <p className="text-sm italic">{items[currentIndex].title}</p>
+    <div className="dark flex flex-col items-center border w-full h-full">
+      <div className="absolute bottom-0 ">
+        {/* Carousel Item */}
+        <div className="w-full flex items-center justify-center">
+          <div
+            className="relative w-48 h-48 cursor-pointer"
+            onClick={() => onSelectLevel(items[currentIndex].id)} // Select level
+          >
+            <img
+              src={items[currentIndex].image}
+              alt={`Item ${currentIndex + 1}`}
+              className="w-full h-full object-contain"
+            />
           </div>
         </div>
-      </div>
 
-      {/* Centered Text */}
-      <div className="flex items-center justify-center h-[15%]">
-        <p className="text-center text-white text-lg font-semibold">
-          Select Your Level
-        </p>
+        {/* Centered Text */}
+        <div className="flex flex-col items-center justify-center mt-10 w-full bg-opacity-50 text-white text-center py-2">
+          <p className="text-lg font-semibold">Select Your Level</p>
+          <p className="text-sm italic">{items[currentIndex].title}</p>
+        </div>
+
+        {/* Navigation Buttons */}
+        <div className="flex justify-center items-center my-10">
+          <button
+            onClick={handlePrev}
+            className="bg-gray-700 text-white px-4 py-2 rounded-l-lg"
+          >
+            Prev
+          </button>
+          <button
+            onClick={handleNext}
+            className="bg-gray-700 text-white px-4 py-2 rounded-r-lg"
+          >
+            Next
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const Topics: React.FC<{ levelId: number; onBack: () => void }> = ({
+  levelId,
+  onBack,
+}) => {
+  // Dummy topics data
+  const topics: Record<number, string[]> = {
+    1: ["Basics of HTML", "CSS Fundamentals", "JavaScript Intro"],
+    2: ["React Basics", "State Management", "Component Lifecycle"],
+    3: ["Advanced React", "Performance Optimization", "Server-Side Rendering"],
+    4: ["Full Stack Development", "Scalability", "Cloud Deployment"],
+  };
+
+  // Pagination State
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const itemsPerPage = 3;
+  const totalPages = Math.ceil(topics[levelId]?.length / itemsPerPage);
+
+  const handlePrev = () => {
+    setCurrentIndex((prev) => Math.max(prev - 1, 0));
+  };
+
+  const handleNext = () => {
+    setCurrentIndex((prev) => Math.min(prev + 1, totalPages - 1));
+  };
+
+  return (
+    <div className="flex flex-col w-full h-full relative border">
+      {/* Back Button */}
+      <button
+        className="px-4 py-2 bg-gray-700 text-white text-sm font-semibold rounded hover:bg-gray-600 transition w-full"
+        onClick={onBack}
+      >
+        ← Back to Levels
+      </button>
+
+      {/* Topic List */}
+      <div className="flex flex-col flex-1 overflow-y-auto p-2">
+        {topics[levelId]
+          ?.slice(
+            currentIndex * itemsPerPage,
+            (currentIndex + 1) * itemsPerPage,
+          )
+          .map((topic, index) => (
+            <div
+              key={index}
+              className="flex items-center gap-4 p-3 rounded-lg hover:bg-gray-800 cursor-pointer transition"
+            >
+              <FaFileAlt className="text-gray-400 text-lg" /> {/* File Icon */}
+              <span className="text-white text-md font-medium">{topic}</span>
+            </div>
+          ))}
       </div>
 
       {/* Navigation Buttons */}
-      <div className="flex justify-center items-center h-[15%]">
+      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex items-center space-x-4">
         <button
           onClick={handlePrev}
-          className="bg-gray-700 text-white px-4 py-2 rounded-l-lg"
+          className="bg-gray-700 text-white px-4 py-2 rounded-l-lg disabled:opacity-50"
+          disabled={currentIndex === 0}
         >
           Prev
         </button>
+        <span className="text-white text-md font-semibold">
+          {currentIndex + 1} / {totalPages}
+        </span>
         <button
           onClick={handleNext}
-          className="bg-gray-700 text-white px-4 py-2 rounded-r-lg"
+          className="bg-gray-700 text-white px-4 py-2 rounded-r-lg disabled:opacity-50"
+          disabled={currentIndex === totalPages - 1}
         >
           Next
         </button>
@@ -115,25 +196,28 @@ const Carousel: React.FC<{
 };
 
 const ThreeDCanvas: React.FC = () => {
+  const [selectedLevel, setSelectedLevel] = useState<number | null>(null);
+
+  // Define static carousel items with fixed titles
   const carouselItems = [
     {
       id: 1,
-      image: "https://via.placeholder.com/150/FF0000/FFFFFF?text=Beginner",
+      image: faker.image.url({ width: 150, height: 150 }), // Random image URL
       title: "Beginner-Level",
     },
     {
       id: 2,
-      image: "https://via.placeholder.com/150/00FF00/FFFFFF?text=Intermediate",
+      image: faker.image.url({ width: 150, height: 150 }),
       title: "Intermediate-Level",
     },
     {
       id: 3,
-      image: "https://via.placeholder.com/150/0000FF/FFFFFF?text=Advanced",
+      image: faker.image.url({ width: 150, height: 150 }),
       title: "Advanced-Level",
     },
     {
       id: 4,
-      image: "https://via.placeholder.com/150/FFFF00/000000?text=Expert",
+      image: faker.image.url({ width: 150, height: 150 }),
       title: "Expert-Level",
     },
   ];
@@ -148,7 +232,10 @@ const ThreeDCanvas: React.FC = () => {
           borderRight: "1px solid gray",
         }}
       >
-        <Canvas>
+        <Canvas
+          gl={{ antialias: true }}
+          style={{ backgroundColor: "black" }} // Set the background color to black
+        >
           <Lights />
           <Box />
         </Canvas>
@@ -181,9 +268,19 @@ const ThreeDCanvas: React.FC = () => {
           </div>
         </header>
 
-        {/* Carousel anchored at the bottom */}
-        <div className="absolute bottom-0 w-full">
-          <Carousel items={carouselItems} />
+        {/* Conditional rendering for Carousel or Topics */}
+        <div className="flex w-full h-full">
+          {selectedLevel === null ? (
+            <Carousel
+              items={carouselItems}
+              onSelectLevel={(levelId) => setSelectedLevel(levelId)} // Handle level selection
+            />
+          ) : (
+            <Topics
+              levelId={selectedLevel}
+              onBack={() => setSelectedLevel(null)} // Go back to carousel
+            />
+          )}
         </div>
       </div>
     </div>
