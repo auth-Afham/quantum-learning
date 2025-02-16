@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Canvas, useThree, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
-import { FaBell, FaCog, FaUser, FaFileAlt, FaThumbsUp, FaHeart, FaFire, FaUsers } from "react-icons/fa";
+import { FaComments, FaCog, FaHome, FaFileAlt, FaThumbsUp, FaHeart, FaFire, FaUsers, FaTimes, FaCube } from "react-icons/fa";
 import { faker } from "@faker-js/faker"; // Import faker
 
 // Box component using THREE
@@ -245,7 +245,11 @@ const ThreeDCanvas: React.FC = () => {
           <Lights />
           <Box />
         </Canvas>
-        <div className="absolute top-5 left-5 bg-gray-800 px-4 py-2 rounded-lg text-white">
+        <div className="absolute top-5 left-5 bg-gray-800 px-4 py-2 rounded-lg flex items-center space-x-3">
+  {/* Logo Icon */}
+  <FaCube className="text-white text-2xl" />
+            {/* <img src="https://via.placeholder.com/40" alt="Logo" className="w-10 h-10" /> */}
+          {/* 3D Model Title */}
           <h2 className="text-lg font-semibold">{modelTitle}</h2>
         </div>
       </div>
@@ -257,21 +261,10 @@ const ThreeDCanvas: React.FC = () => {
       >
         {/* Header */}
         <header className="bg-gray-800 p-4 rounded-tl-xl flex items-center justify-between">
-          {/* Logo */}
-          <div className="flex items-center space-x-2">
-            <img
-              src="https://via.placeholder.com/40"
-              alt="Logo"
-              className="w-10 h-10"
-            />
-          </div>
-
-          {/* Icons */}
-          <div className="flex items-center space-x-4">
-            <FaBell className="text-white text-lg cursor-pointer" />
-            <FaCog className="text-white text-lg cursor-pointer" />
-            <FaUser className="text-white text-lg cursor-pointer" />
-          </div>
+        <div></div> {/* Empty div to balance flex space */}
+          <button className="text-white text-lg cursor-pointer">
+            <FaTimes />
+          </button>
         </header>
 
         {/* Conditional rendering for Carousel or Topics */}
@@ -290,15 +283,15 @@ const ThreeDCanvas: React.FC = () => {
         </div>
 
         {/* Decorative Circles Below */}
-        <div className="absolute -bottom-14 left-1/2 transform -translate-x-1/2 flex gap-4">
-          <div className="w-6 h-6 bg-gray-700 rounded-full flex items-center justify-center">
-            <FaBell className="text-white text-xs" />
+        <div className="absolute -bottom-16 left-1/2 transform -translate-x-1/2 flex gap-4">
+          <div className="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center">
+            <FaComments className="text-white text-md" />
           </div>
-          <div className="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center">
-            <FaCog className="text-white text-sm" />
+          <div className="w-12 h-12 bg-gray-600 rounded-full flex items-center justify-center">
+            <FaHome className="text-white text-lg" />
           </div>
-          <div className="w-5 h-5 bg-gray-500 rounded-full flex items-center justify-center">
-            <FaUser className="text-white text-xs" />
+          <div className="w-9 h-9 bg-gray-500 rounded-full flex items-center justify-center">
+            <FaCog className="text-white text-md" />
           </div>
         </div>
       </div>
