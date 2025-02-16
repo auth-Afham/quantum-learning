@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Canvas, useThree, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
-import { FaComments, FaCog, FaHome, FaFileAlt, FaThumbsUp, FaHeart, FaFire, FaUsers, FaTimes, FaCube } from "react-icons/fa";
+import { FaComments, FaCog, FaHome, FaFileAlt, FaThumbsUp, FaHeart, FaFire, FaUsers, FaTimes, FaCube, FaSearch, FaInfoCircle, FaCrosshairs } from "react-icons/fa";
 import { faker } from "@faker-js/faker"; // Import faker
 
 // Box component using THREE
@@ -298,16 +298,29 @@ const ThreeDCanvas: React.FC = () => {
 
       {/* 🔍 Search Engine with Reactions */}
       <div className="absolute bottom-4 flex items-center space-x-4">
-        <div className="bg-gray-800 p-3 rounded-r-lg flex items-center space-x-2 shadow-lg">
-          <span className="text-gray-400">🔍</span>
-          <input
-            type="text"
-            placeholder="Search..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="bg-transparent outline-none text-white placeholder-gray-500 w-120"
-          />
-        </div>
+<div className="bg-gray-800 p-3 rounded-r-lg flex items-center space-x-2 shadow-lg w-max">
+  {/* Search Icon */}
+  <FaSearch className="text-gray-400" />
+
+  {/* Search Input */}
+  <input
+    type="text"
+    placeholder="Search..."
+    value={searchQuery}
+    onChange={(e) => setSearchQuery(e.target.value)}
+    className="bg-transparent outline-none text-white placeholder-gray-500 flex-1 w-100"
+  />
+
+  {/* Info Button */}
+  <button className="text-white hover:text-gray-400">
+    <FaInfoCircle />
+  </button>
+
+  {/* Center Button */}
+  <button className="text-white hover:text-gray-400">
+    <FaCrosshairs />
+  </button>
+</div>
 
         {/* Reaction Counter */}
 <div className="flex items-center space-x-3 bg-gray-700 p-2 rounded-lg shadow-md">
