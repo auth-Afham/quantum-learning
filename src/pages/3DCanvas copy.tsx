@@ -76,7 +76,7 @@ const Carousel: React.FC<{
   };
 
   return (
-    <div className="dark flex flex-col items-center border w-full h-full">
+    <div className="dark flex flex-col items-center w-full h-full">
       <div className="absolute bottom-0 ">
         {/* Carousel Item */}
         <div className="w-full flex items-center justify-center">
@@ -144,7 +144,7 @@ const Topics: React.FC<{ levelId: number; onBack: () => void }> = ({
   };
 
   return (
-    <div className="flex flex-col w-full h-full relative border">
+    <div className="flex flex-col w-full h-full relative">
       {/* Back Button */}
       <button
         className="px-4 py-2 bg-gray-700 text-white text-sm font-semibold rounded hover:bg-gray-600 transition w-full"
@@ -223,13 +223,13 @@ const ThreeDCanvas: React.FC = () => {
   ];
 
   return (
-    <div className="dark flex w-full h-screen overflow-hidden bg-gray-900 text-gray-100">
+    <div className="dark flex w-full h-screen overflow-hidden bg-black text-gray-100">
       {/* Left section for the 3D Canvas */}
       <div
         className="h-full"
         style={{
           width: "calc(100% - 33.33%)", // Dynamically take the remaining 2/3 of the viewport
-          borderRight: "1px solid gray",
+          // borderRight: "1px solid gray",
         }}
       >
         <Canvas
@@ -243,14 +243,14 @@ const ThreeDCanvas: React.FC = () => {
 
       {/* Right section for text, assets, and content */}
       <div
-        className="h-full flex flex-col border-l border-gray-700 relative"
+        className=" my-10 mb-20 rounded-l-xl bg-gray-900 flex flex-col relative"
         style={{
           width: "33.33%", // Dynamically take 1/3 of the viewport width
           boxSizing: "border-box",
         }}
       >
         {/* Header */}
-        <header className="bg-gray-800 p-4 border-b border-gray-700 flex items-center justify-between">
+        <header className="bg-gray-800 p-4 rounded-tl-xl flex items-center justify-between">
           {/* Logo */}
           <div className="flex items-center space-x-2">
             <img
@@ -281,6 +281,13 @@ const ThreeDCanvas: React.FC = () => {
               onBack={() => setSelectedLevel(null)} // Go back to carousel
             />
           )}
+        </div>
+
+        {/* Decorative Circles Below */}
+        <div className="absolute -bottom-14 left-1/2 transform -translate-x-1/2 flex gap-4">
+          <div className="w-6 h-6 bg-gray-700 rounded-full"></div>
+          <div className="w-8 h-8 bg-gray-600 rounded-full"></div>
+          <div className="w-5 h-5 bg-gray-500 rounded-full"></div>
         </div>
       </div>
     </div>

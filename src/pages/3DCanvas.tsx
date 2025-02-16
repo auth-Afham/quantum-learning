@@ -197,12 +197,13 @@ const Topics: React.FC<{ levelId: number; onBack: () => void }> = ({
 
 const ThreeDCanvas: React.FC = () => {
   const [selectedLevel, setSelectedLevel] = useState<number | null>(null);
+  const [searchQuery, setSearchQuery] = useState(""); // Search state
 
   // Define static carousel items with fixed titles
   const carouselItems = [
     {
       id: 1,
-      image: faker.image.url({ width: 150, height: 150 }), // Random image URL
+      image: faker.image.url({ width: 150, height: 150 }),
       title: "Beginner-Level",
     },
     {
@@ -223,19 +224,10 @@ const ThreeDCanvas: React.FC = () => {
   ];
 
   return (
-    <div className="dark flex w-full h-screen overflow-hidden bg-black text-gray-100">
+    <div className="dark flex w-full h-screen overflow-hidden bg-black text-gray-100 relative">
       {/* Left section for the 3D Canvas */}
-      <div
-        className="h-full"
-        style={{
-          width: "calc(100% - 33.33%)", // Dynamically take the remaining 2/3 of the viewport
-          // borderRight: "1px solid gray",
-        }}
-      >
-        <Canvas
-          gl={{ antialias: true }}
-          style={{ backgroundColor: "black" }} // Set the background color to black
-        >
+      <div className="h-full" style={{ width: "calc(100% - 33.33%)" }}>
+        <Canvas gl={{ antialias: true }} style={{ backgroundColor: "black" }}>
           <Lights />
           <Box />
         </Canvas>
@@ -243,11 +235,8 @@ const ThreeDCanvas: React.FC = () => {
 
       {/* Right section for text, assets, and content */}
       <div
-        className=" my-10 mb-20 rounded-l-xl bg-gray-900 flex flex-col relative"
-        style={{
-          width: "33.33%", // Dynamically take 1/3 of the viewport width
-          boxSizing: "border-box",
-        }}
+        className="my-10 mb-20 rounded-l-xl bg-gray-900 flex flex-col relative"
+        style={{ width: "33.33%", boxSizing: "border-box" }}
       >
         {/* Header */}
         <header className="bg-gray-800 p-4 rounded-tl-xl flex items-center justify-between">
@@ -273,22 +262,40 @@ const ThreeDCanvas: React.FC = () => {
           {selectedLevel === null ? (
             <Carousel
               items={carouselItems}
-              onSelectLevel={(levelId) => setSelectedLevel(levelId)} // Handle level selection
+              onSelectLevel={(levelId) => setSelectedLevel(levelId)}
             />
           ) : (
             <Topics
               levelId={selectedLevel}
-              onBack={() => setSelectedLevel(null)} // Go back to carousel
+              onBack={() => setSelectedLevel(null)}
             />
           )}
         </div>
 
         {/* Decorative Circles Below */}
         <div className="absolute -bottom-14 left-1/2 transform -translate-x-1/2 flex gap-4">
-          <div className="w-6 h-6 bg-gray-700 rounded-full"></div>
-          <div className="w-8 h-8 bg-gray-600 rounded-full"></div>
-          <div className="w-5 h-5 bg-gray-500 rounded-full"></div>
+          <div className="w-6 h-6 bg-gray-700 rounded-full flex items-center justify-center">
+            <FaBell className="text-white text-xs" />
+          </div>
+          <div className="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center">
+            <FaCog className="text-white text-sm" />
+          </div>
+          <div className="w-5 h-5 bg-gray-500 rounded-full flex items-center justify-center">
+            <FaUser className="text-white text-xs" />
+          </div>
         </div>
+      </div>
+
+      {/* 🔍 Search Engine (Bottom-Left) */}
+      <div className="absolute bottom-4 bg-gray-800 p-3 rounded-r-lg flex items-center space-x-2 shadow-lg">
+        <span className="text-gray-400">🔍</span>
+        <input
+          type="text"
+          placeholder="Search..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="bg-transparent outline-none text-white placeholder-gray-500 w-120"
+        />
       </div>
     </div>
   );
