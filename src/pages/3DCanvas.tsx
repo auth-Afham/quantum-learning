@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Canvas, useThree, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
-import { FaBell, FaCog, FaUser, FaFileAlt } from "react-icons/fa";
+import { FaBell, FaCog, FaUser, FaFileAlt, FaThumbsUp, FaHeart, FaFire, FaUsers } from "react-icons/fa";
 import { faker } from "@faker-js/faker"; // Import faker
 
 // Box component using THREE
@@ -198,6 +198,13 @@ const Topics: React.FC<{ levelId: number; onBack: () => void }> = ({
 const ThreeDCanvas: React.FC = () => {
   const [selectedLevel, setSelectedLevel] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState(""); // Search state
+  const [reactions, setReactions] = useState({
+    like: 10,
+    love: 5,
+    fire: 3,
+  });
+  const [viewers, setViewers] = useState(Math.floor(Math.random() * 100) + 1);
+  const [modelTitle, setModelTitle] = useState("3D Rotating Cube");
 
   // Define static carousel items with fixed titles
   const carouselItems = [
@@ -223,6 +230,13 @@ const ThreeDCanvas: React.FC = () => {
     },
   ];
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setViewers((prev) => prev + (Math.random() > 0.5 ? 1 : -1));
+    }, 2000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className="dark flex w-full h-screen overflow-hidden bg-black text-gray-100 relative">
       {/* Left section for the 3D Canvas */}
@@ -231,6 +245,9 @@ const ThreeDCanvas: React.FC = () => {
           <Lights />
           <Box />
         </Canvas>
+        <div className="absolute top-5 left-5 bg-gray-800 px-4 py-2 rounded-lg text-white">
+          <h2 className="text-lg font-semibold">{modelTitle}</h2>
+        </div>
       </div>
 
       {/* Right section for text, assets, and content */}
@@ -286,16 +303,49 @@ const ThreeDCanvas: React.FC = () => {
         </div>
       </div>
 
-      {/* 🔍 Search Engine (Bottom-Left) */}
-      <div className="absolute bottom-4 bg-gray-800 p-3 rounded-r-lg flex items-center space-x-2 shadow-lg">
-        <span className="text-gray-400">🔍</span>
-        <input
-          type="text"
-          placeholder="Search..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="bg-transparent outline-none text-white placeholder-gray-500 w-120"
-        />
+      {/* 🔍 Search Engine with Reactions */}
+      <div className="absolute bottom-4 flex items-center space-x-4">
+        <div className="bg-gray-800 p-3 rounded-r-lg flex items-center space-x-2 shadow-lg">
+          <span className="text-gray-400">🔍</span>
+          <input
+            type="text"
+            placeholder="Search..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="bg-transparent outline-none text-white placeholder-gray-500 w-120"
+          />
+        </div>
+
+        {/* Reaction Counter */}
+<div className="flex items-center space-x-3 bg-gray-700 p-2 rounded-lg shadow-md">
+  <div
+    className="flex items-center space-x-1 cursor-pointer"
+    onClick={() => setReactions((prev) => ({ ...prev, like: prev.like + 1 }))}
+  >
+    <FaThumbsUp className="text-blue-400" />
+    <span className="text-white">{reactions.like}</span>
+  </div>
+  <div
+    className="flex items-center space-x-1 cursor-pointer"
+    onClick={() => setReactions((prev) => ({ ...prev, love: prev.love + 1 }))}
+  >
+    <FaHeart className="text-red-400" />
+    <span className="text-white">{reactions.love}</span>
+  </div>
+  <div
+    className="flex items-center space-x-1 cursor-pointer"
+    onClick={() => setReactions((prev) => ({ ...prev, fire: prev.fire + 1 }))}
+  >
+    <FaFire className="text-orange-400" />
+    <span className="text-white">{reactions.fire}</span>
+  </div>
+
+
+</div>
+<div className=" top-5 right-5 flex items-center bg-gray-700 px-4 py-2 rounded-lg text-white">
+        <FaUsers className="text-green-400 mr-2" />
+        <span>{viewers} Live Viewers</span>
+      </div>
       </div>
     </div>
   );
