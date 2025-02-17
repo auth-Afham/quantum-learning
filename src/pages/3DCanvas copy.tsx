@@ -19,34 +19,24 @@ import {
 import { faker } from "@faker-js/faker"; // Import faker
 
 // Box component using THREE
-const Shape: React.FC<{ shapeType: string }> = ({ shapeType }) => {
+export const Box: React.FC = () => {
   const { scene } = useThree();
-  const meshRef = React.useRef<THREE.Mesh | null>(null);
+  const meshRef = React.useRef<THREE.Mesh>(null);
 
-  useEffect(() => {
-    let geometry: THREE.BufferGeometry | null = null; // Explicitly declare type
-
-    if (shapeType.toLowerCase() === "sphere") {
-      geometry = new THREE.SphereGeometry(0.7, 32, 32);
-    } else if (shapeType.toLowerCase() === "box") {
-      geometry = new THREE.BoxGeometry(1, 1, 1);
-    } else if (shapeType.toLowerCase() === "cylinder") {
-      geometry = new THREE.CylinderGeometry(0.5, 0.5, 1.5, 32);
-    }
-
-    if (!geometry) return; // Guard clause to prevent null usage
-
+  React.useEffect(() => {
+    const geometry = new THREE.BoxGeometry(1, 1, 1);
     const material = new THREE.MeshStandardMaterial({ color: "hotpink" });
     const mesh = new THREE.Mesh(geometry, material);
     meshRef.current = mesh;
+
     scene.add(mesh);
 
     return () => {
       scene.remove(mesh);
-      geometry?.dispose(); // Use optional chaining to avoid errors
+      geometry.dispose();
       material.dispose();
     };
-  }, [scene, shapeType]);
+  }, [scene]);
 
   useFrame(() => {
     if (meshRef.current) {
@@ -58,10 +48,11 @@ const Shape: React.FC<{ shapeType: string }> = ({ shapeType }) => {
   return null;
 };
 
-const Lights: React.FC = () => {
+// Lights component using THREE
+export const Lights: React.FC = () => {
   const { scene } = useThree();
 
-  useEffect(() => {
+  React.useEffect(() => {
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
     scene.add(ambientLight);
 
@@ -78,6 +69,7 @@ const Lights: React.FC = () => {
   return null;
 };
 
+// Carousel Component
 // Carousel Component
 const Carousel: React.FC<{
   items: { id: number; image: string; title: string }[];
@@ -219,7 +211,7 @@ const Topics: React.FC<{ levelId: number; onBack: () => void }> = ({
 
 const ThreeDCanvas: React.FC = () => {
   const [selectedLevel, setSelectedLevel] = useState<number | null>(null);
-  // const [searchQuery, setSearchQuery] = useState(""); // Search state
+  const [searchQuery, setSearchQuery] = useState(""); // Search state
   const [reactions, setReactions] = useState({
     like: 10,
     love: 5,
@@ -227,7 +219,6 @@ const ThreeDCanvas: React.FC = () => {
   });
   const [viewers, setViewers] = useState(Math.floor(Math.random() * 100) + 1);
   const [modelTitle] = useState("3D Rotating Cube");
-  const [shape, setShape] = useState("box"); // Default to cube
 
   // Define static carousel items with fixed titles
   const carouselItems = [
@@ -266,7 +257,7 @@ const ThreeDCanvas: React.FC = () => {
       <div className="h-full" style={{ width: "calc(100% - 33.33%)" }}>
         <Canvas gl={{ antialias: true }} style={{ backgroundColor: "black" }}>
           <Lights />
-          <Shape shapeType={shape} />
+          <Box />
         </Canvas>
         <div className="absolute top-5 left-5 bg-gray-800 px-4 py-2 rounded-lg flex items-center space-x-3">
           {/* Logo Icon */}
@@ -329,9 +320,8 @@ const ThreeDCanvas: React.FC = () => {
           <input
             type="text"
             placeholder="Search..."
-            // value={searchQuery}
-            onChange={(e) => setShape(e.target.value)}
-            // onChange={(e) => setSearchQuery(e.target.value)}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
             className="bg-transparent outline-none text-white placeholder-gray-500 flex-1 w-100"
           />
 

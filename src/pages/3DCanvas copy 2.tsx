@@ -30,8 +30,6 @@ const Shape: React.FC<{ shapeType: string }> = ({ shapeType }) => {
       geometry = new THREE.SphereGeometry(0.7, 32, 32);
     } else if (shapeType.toLowerCase() === "box") {
       geometry = new THREE.BoxGeometry(1, 1, 1);
-    } else if (shapeType.toLowerCase() === "cylinder") {
-      geometry = new THREE.CylinderGeometry(0.5, 0.5, 1.5, 32);
     }
 
     if (!geometry) return; // Guard clause to prevent null usage

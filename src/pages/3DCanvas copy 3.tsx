@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Canvas, useThree, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import {
@@ -30,8 +30,6 @@ const Shape: React.FC<{ shapeType: string }> = ({ shapeType }) => {
       geometry = new THREE.SphereGeometry(0.7, 32, 32);
     } else if (shapeType.toLowerCase() === "box") {
       geometry = new THREE.BoxGeometry(1, 1, 1);
-    } else if (shapeType.toLowerCase() === "cylinder") {
-      geometry = new THREE.CylinderGeometry(0.5, 0.5, 1.5, 32);
     }
 
     if (!geometry) return; // Guard clause to prevent null usage
@@ -225,7 +223,8 @@ const ThreeDCanvas: React.FC = () => {
     love: 5,
     fire: 3,
   });
-  const [viewers, setViewers] = useState(Math.floor(Math.random() * 100) + 1);
+  // Store viewers in a useRef to prevent re-renders
+  const viewers = useRef(Math.floor(Math.random() * 100) + 1);
   const [modelTitle] = useState("3D Rotating Cube");
   const [shape, setShape] = useState("box"); // Default to cube
 
@@ -255,7 +254,7 @@ const ThreeDCanvas: React.FC = () => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setViewers((prev) => prev + (Math.random() > 0.5 ? 1 : -1));
+      viewers.current += Math.random() > 0.5 ? 1 : -1;
     }, 2000);
     return () => clearInterval(interval);
   }, []);
@@ -378,7 +377,7 @@ const ThreeDCanvas: React.FC = () => {
         </div>
         <div className=" top-5 right-5 flex items-center bg-gray-700 px-4 py-2 rounded-lg text-white">
           <FaUsers className="text-green-400 mr-2" />
-          <span>{viewers} Live Viewers</span>
+          <span>{viewers.current} Live Viewers</span>
         </div>
       </div>
     </div>
